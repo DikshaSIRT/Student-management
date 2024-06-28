@@ -1,0 +1,268 @@
+#include<stdio.h>
+void insert();
+void display();
+void search();
+void delete();
+void update();
+void sort();
+// int cheack(int r);
+struct student{
+    char name[20];
+    int roll;
+    int marks;
+    char grade[20];
+    float per;
+}s;
+
+void main(){
+    int option;
+    do{
+        printf("\n\t******************************************************************\n");
+        printf("\t\t-------Welcome in Student management program----- \n");
+        printf("\n\t******************************************************************\n\n");
+        printf("\t\t1. New student(insert )\n");
+        printf("\t\t2. student detail\n");
+        printf("\t\t3. search\n");
+        printf("\t\t4. Delete\n");
+        printf("\t\t5. Update\n");
+        printf("\t\t6. short\n");
+        printf("\t\t7. Exit\n");
+        printf("\t______________________________________________________________________\n\n");
+        printf("\t\t Choose your option in above list- \n");
+        scanf("%d", &option);
+
+        switch(option){
+             case 1:
+             insert();
+             break;
+             case 2:
+              display();
+             break;
+             case 3:
+             search();
+             break;
+             case 4:
+              delete();
+             break;
+              case 5:
+              update();
+             break;
+            case 6:
+                sort();
+             break;
+             default:
+              printf("\n\t\tPlease select right option\n");
+             break;
+        }
+    }while(option!=7);
+}
+
+void insert(){
+  FILE *fp;
+int n,r,S=0;
+char ch='y';
+    fp=fopen("St.txt","a");
+    if(fp==NULL){
+        printf("file cannot be opened\n");
+        return;
+    }
+    // printf("\n \t\t\tPrevious store data\n\n");
+    // display();
+    do{printf("\n\t\t\t****Enter new student data****\n");
+    printf("\n\t\t\tEnter student roll no.\n");
+    scanf("%d",&r);
+//     S= cheack(r);
+//     if(S==1){
+// printf("Roll number is already exist\n");
+//     }
+//     else{
+        s.roll=r;
+    fflush(stdin);
+    printf("\t\t\tenter student name\n");
+    gets(s.name);
+    printf("\t\t\tEnter student marks.\n");
+    scanf("%d",&s.marks);
+    printf("\t\t\tTotal number of subject\n");
+    scanf("%d",&n);
+    s.per=(s.marks/n);
+    fflush(stdin);
+    printf("\t\t\tEnter  student grade\n");
+    gets(s.grade);
+     printf("___________________________________________\n\n");
+    fwrite(&s,sizeof(struct student),1,fp);
+
+        printf("\t\t\t*****Student record inserted successfully****\n");
+    // }
+
+    printf("\n\t\t\tDo you  want to continue(Y/N)........\n");
+    scanf("%s",&ch);
+   }while(ch=='y'|| ch=='Y');
+    fclose(fp);}
+
+    
+
+void display(){ FILE *fp;
+       fp=fopen("St.txt","r");  
+    if(fp==NULL){
+        printf("file cannot be opened\n");
+        return;
+    }
+    printf("\n\t\t\t**** student data****\n");
+    printf("__________________________________________________________________________________________________________\n\n");
+    printf("\t\tRoll no.\t\tName\t\t Marks\t\tPercentage\tGrade\n");
+    printf("_________________________________________________________________________________________________________\n");
+    while(fread(&s,sizeof(s),1,fp)==1)
+    {
+        printf("\t\t  %d\t\t\t%s\t \t  %d\t\t   %.2f\t %s",s.roll ,s.name,s.marks,s.per,s.grade);
+        printf("\n");
+    }
+    printf("_________________________________________________________________________________________________________\n\n");
+    fclose(fp);
+}
+
+void search(){ 
+    FILE *fp;
+     int ro,flag=0;
+       fp=fopen("St.txt","r");
+      if(fp==NULL){
+        printf("cannot open file\n");
+        return;
+    }
+    printf("\t\t\tEnter student Roll no which you want to search\n");
+    scanf("%d",&ro);
+     while(fread(&s,sizeof(s),1,fp)> 0 && flag==0){
+        if(s.roll==ro){
+            flag=1;
+             printf("\n\n\t\t...............Student record as follows..................\n\n\n");
+             printf("__________________________________________________________________________________________________________\n\n");
+             printf("\t\tRoll no.\t\tName\t\t Marks\t\tPercentage\tGrade\n");
+             printf("_________________________________________________________________________________________________________\n");
+             printf("\t\t  %d\t\t\t%s\t \t  %d\t\t   %.2f\t  %s",s.roll ,s.name,s.marks,s.per,s.grade);
+             printf("\n\n\t\t\t.................Search successefully.............\n");
+        }
+     }
+     if(flag==0){
+        printf("\t\t\t*********no record found********\n");
+     }
+     fclose(fp);
+}
+void update(){
+    int n, ro,flag=0;
+         FILE *fp,*ft;
+          fp=fopen("St.txt","r");
+         ft=fopen("rr.txt","a");
+    if(fp==NULL){
+        printf("cannot open file\n");
+        return;
+    }
+    printf("previous record as follows");
+    display();
+    printf("Enter student roll no which you want to update\n");
+    scanf("%d",&ro);
+     while(fread(&s,sizeof(s),1,fp)){
+        if(s.roll==ro){
+            flag=1;
+            printf("\n\n\t\t.................Student record as follows..................\n\n\n");
+             printf("\n\tEnter student roll no.\n");
+                scanf("%d",&s.roll);
+              fflush(stdin);
+    
+                 printf("\tenter student name\n");
+               gets(s.name);
+               printf("\tEnter student marks.\n");
+             scanf("%d",&s.marks);
+             printf("\tTotal number of subject\n");
+              scanf("%d",&n);
+              s.per=(s.marks/n);
+               fflush(stdin);
+              printf("\tEnter  student grade\n");
+              gets(s.grade);
+             printf("\n\n\t\t.................updated successefully.............\n");
+              
+        }
+       fwrite(&s,sizeof(struct student),1,ft);
+     }
+     fclose(fp);
+     fclose(ft);
+     if(flag==0){
+        printf("\t\t \t************no record found***********\t");
+     }
+     if(flag==1){
+        ft=fopen("rr.txt","r");
+        fp=fopen("St.txt","w");
+        while( fread(&s,sizeof(struct student),1,ft)){
+              fwrite(&s,sizeof(struct student),1,fp);
+        }
+       
+          fclose(fp);
+         fclose(ft);
+         remove("St.txt");
+         rename("rr.txt","St.txt");
+         
+        }
+}
+void delete(){
+    int ro,flag=0;
+    FILE *fp,*ft;
+      fp=fopen("St.txt","r");
+    ft=fopen("rr.txt","a");
+    if(fp==NULL){
+        printf("cannot open file\n");
+        return;
+    }
+    printf("\t\t\tEnter student roll no which you want to delete\n");
+    scanf("%d",&ro);
+     while(fread(&s,sizeof(s),1,fp)){
+        if(s.roll==ro){
+            flag=1;
+            printf("\n\t\t\t Delete Successfully\n\n");
+        }   
+        else     
+        fwrite(&s,sizeof(struct student),1,ft);
+     }
+     fclose(fp);
+     fclose(ft);
+     if(flag==0){
+        printf("\t\t********No record found********\t");
+     }
+    
+        if(flag==1){
+         remove("St.txt");
+         rename("rr.txt","St.txt");
+     }
+}
+void sort(){
+    struct student temp;
+    struct student arr[50];
+    FILE *fp;
+    int i ,j,k=0;
+
+    fp=fopen("St.txt","r");
+     if(fp==NULL){
+        printf("cannot open file\n");
+        return;
+    } 
+    i=0;
+    while(fread(&arr[i],sizeof(arr[i]),1,fp)==1){
+        i++;k++;
+    }
+    for(i=0;i<k;i++)
+    {
+        for(j=0;j<k-i-1;j++){
+            if(arr[j].roll>arr[j+1].roll){
+                temp=arr[j];
+                arr[j]=arr[j+1];
+                arr[j+1]=temp;
+            }
+        }
+    }
+printf("\n \n\t\t............After sorting student details are..............\n\n\n");
+printf("\n\t\t\tRoll No\tName \t Marks \tpercentage\t Grade\n");
+for(i=0;i<k;i++){
+    printf("\n\t\t\t%d\t%s\t %d\t%.2f\t\t  %s",arr[i].roll,arr[i].name,arr[i].marks,arr[i].per,arr[i].grade);
+    printf("\n");
+}
+fclose(fp);
+}
+
+
